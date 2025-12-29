@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.0" type="package" method="upgrade">
+	<name>Package - miniOrange Import Export Users</name>
+	<packagename>importexportusers</packagename>
+	<license>GNU General Public License version 3; see LICENSE.txt</license>
+	<version>4.1</version>
+	<author>miniOrange Security Software Pvt. Ltd.</author>
+	<authorEmail>info@xecurify.com</authorEmail>
+	<authorUrl>https://www.miniorange.com/</authorUrl>
+	<copyright>Copyright (C) 2015 miniOrange. All rights reserved.</copyright>
+	<creationDate>May 2022</creationDate>
+	<description>miniOrange Import Export Users Installed Successfully!</description>
+	<files>
+		<file type="plugin" id="miniorangeimportexportusers" group="system">plg_system_miniorangeimportexportusers.zip</file>
+		<file type="component" id="miniorange_importexportusers" >com_miniorange_importexportusers.zip</file>
+	</files>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.pkg_miniorangeimportexportusers.ini</language>
+		<language tag="en-GB">en-GB/en-GB.pkg_miniorangeimportexportusers.sys.ini</language>
+	</languages>
+	<scriptfile>pkg_script.php</scriptfile>
+	<updateservers>
+		<server type="extension" priority="1" name="ImportExportUsers">https://prod-marketing-site.s3.amazonaws.com/plugins/joomla/joomla_importexportusers_update.xml</server>
+	</updateservers>
+</extension>

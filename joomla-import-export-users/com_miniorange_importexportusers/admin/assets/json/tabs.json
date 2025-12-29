@@ -1,0 +1,27 @@
+{
+    "overview" : {
+        "id" : "overview",
+        "href" : "index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=overview",
+        "text" : "COM_MINIORANGE_IMPORTEXPORTUSERS_OVERVIEW"
+    },
+    "exportsettings" : {
+        "id" : "export_configuration",
+        "href" : "index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=exportsettings",
+        "text" : "COM_MINIORANGE_IMPORTEXPORTUSERS_EXPORT"
+    },
+    "importsettings" : {
+        "id" : "import_configuration",
+        "href" : "index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=importsettings",
+        "text" :"COM_MINIORANGE_IMPORTEXPORTUSERS_IMPORT"
+    },
+    "cronimport" : {
+        "id" : "cron_import",
+        "href" : "index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=cronimport",
+        "text" :"COM_MINIORANGE_IMPORTEXPORTUSERS_CRON_IMPORT"
+    },
+    "license_page" : {
+        "id" : "licensing_page",
+        "href" : "index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=license_page",
+        "text" :"COM_MINIORANGE_IMPORTEXPORTUSERS_UPGRADE"
+    }
+}
