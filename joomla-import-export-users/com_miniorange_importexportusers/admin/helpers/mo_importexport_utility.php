@@ -12,6 +12,8 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
 use Joomla\CMS\Access\Access;
+use Joomla\Database\DatabaseInterface;
+
 class MoImportExportUtility
 {
 
@@ -21,9 +23,20 @@ class MoImportExportUtility
         return($jVersion->getShortVersion());
     }
 
+    public static function moGetDatabase()
+    {
+        // Joomla 4+
+        if (class_exists(DatabaseInterface::class) && method_exists(Factory::class, 'getContainer')) {
+            return Factory::getContainer()->get(DatabaseInterface::class);
+        }
+
+        // Joomla 3 fallback
+        return Factory::getDbo();
+    }
+
     public static function GetPluginVersion()
     {
-        $db = Factory::getDbo();
+        $db = self::moGetDatabase();
         $dbQuery = $db->getQuery(true)
             ->select('manifest_cache')
             ->from($db->quoteName('#__extensions'))
@@ -92,7 +105,7 @@ class MoImportExportUtility
 
     public static function readUserGroupsTable()
     {
-        $db = Factory::getDbo();
+        $db = self::moGetDatabase();
         $query = $db->getQuery(true);
         $query->select('*');
         $query->from($db->quoteName('#__usergroups'));
@@ -172,7 +185,7 @@ class MoImportExportUtility
 
     public static function getCustomerDetails()
     {
-        $db = Factory::getDbo();
+        $db = self::moGetDatabase();
         $query = $db->getQuery(true);
         $query->select('*');
         $query->from($db->quoteName('#__miniorange_importexport_customer_details'));
@@ -199,7 +212,7 @@ class MoImportExportUtility
 
     public static function getCustomerToken()
     {
-        $db = Factory::getDbo();
+        $db = self::moGetDatabase();
         $query = $db->getQuery(true);
         $query->select('customer_token');
         $query->from($db->quoteName('#__miniorange_importexport_customer_details'));
@@ -225,7 +238,7 @@ class MoImportExportUtility
 
     public static function updateDBValue($table_name, $column_name, $export_format)
     {
-        $db = Factory::getDbo();
+        $db = self::moGetDatabase();
         $query = $db->getQuery(true);
         $fields = array(
             $db->quoteName($column_name) . ' = ' . $db->quote($export_format),
@@ -242,7 +255,7 @@ class MoImportExportUtility
 
     public static function readUsersTableData()
     {
-        $db = Factory::getDbo();
+        $db = self::moGetDatabase();
         $query = $db->getQuery(true);
         $query->select('*');
         $query->from($db->quoteName('#__users'));
@@ -251,7 +264,7 @@ class MoImportExportUtility
     }
 
     public static function loadGroups(){
-        $db = Factory::getDbo();
+        $db = self::moGetDatabase();
         $db->setQuery($db->getQuery(true)
             ->select('*')
             ->from("#__usergroups")
@@ -260,7 +273,7 @@ class MoImportExportUtility
     }
 
     public static function loadUserGroups($user_id){
-        $db = Factory::getDbo();
+        $db = self::moGetDatabase();
         $db->setQuery($db->getQuery(true)
             ->select('group_id')
             ->from("#__user_usergroup_map")
@@ -272,7 +285,7 @@ class MoImportExportUtility
     public static function getGroupNameByID($group_id)
     {
 
-        $db = Factory::getDbo();
+        $db = self::moGetDatabase();
         $db->setQuery($db->getQuery(true)
             ->select('title')
             ->from("#__usergroups")
@@ -291,7 +304,7 @@ class MoImportExportUtility
 
     public static function load_database_values($table)
     {
-        $db = Factory::getDbo();
+        $db = self::moGetDatabase();
         $query = $db->getQuery(true);
         $query->select('*');
         $query->from($db->quoteName($table));
@@ -303,7 +316,7 @@ class MoImportExportUtility
 
     public static function generic_update_query($database_name, $updatefieldsarray)
     {
-        $db = Factory::getDbo();
+        $db = self::moGetDatabase();
         $query = $db->getQuery(true);
   
         $query->select('COUNT(*)')
@@ -360,6 +373,40 @@ class MoImportExportUtility
         return 'Unknown';
     }
 
+    /**
+     * Formats timezone as: America/Chicago (UTC -06:00)
+     * If $browserOffsetMinutes is provided (JS Date.getTimezoneOffset), it is used; otherwise server computes offset (DST-safe).
+     */
+    public static function format_timezone_with_utc_offset($tzName, $browserOffsetMinutes = null)
+    {
+        $tzName = trim((string) $tzName);
+        if ($tzName === '') {
+            $tzName = 'UTC';
+        }
+
+        if ($browserOffsetMinutes !== null && preg_match('/^-?\d+$/', (string) $browserOffsetMinutes)) {
+            $m = (int) $browserOffsetMinutes; // minutes behind UTC
+            $sign = $m > 0 ? '-' : '+';
+            $abs = abs($m);
+            $hh = str_pad((string) floor($abs / 60), 2, '0', STR_PAD_LEFT);
+            $mm = str_pad((string) ($abs % 60), 2, '0', STR_PAD_LEFT);
+            return $tzName . ' (UTC ' . $sign . $hh . ':' . $mm . ')';
+        }
+
+        try {
+            $tzObj = new \DateTimeZone($tzName);
+            $dt = new \DateTime('now', $tzObj);
+            $offsetSeconds = (int) $dt->getOffset();
+            $sign = $offsetSeconds >= 0 ? '+' : '-';
+            $abs = abs($offsetSeconds);
+            $hh = str_pad((string) floor($abs / 3600), 2, '0', STR_PAD_LEFT);
+            $mm = str_pad((string) floor(($abs % 3600) / 60), 2, '0', STR_PAD_LEFT);
+            return $tzName . ' (UTC ' . $sign . $hh . ':' . $mm . ')';
+        } catch (\Exception $e) {
+            return 'UTC (UTC +00:00)';
+        }
+    }
+
     public static function send_efficiency_mail($fromEmail, $content)
     {
         $url = 'https://login.xecurify.com/moas/api/notify/send';
@@ -410,7 +457,7 @@ class MoImportExportUtility
     }
 
     public static function loadDBValues($table, $load_by, $col_name = '*', $id_name = 'id', $id_value = 1){
-        $db = Factory::getDbo();
+        $db = self::moGetDatabase();
         $query = $db->getQuery(true);
 
         $query->select($col_name);

@@ -11,6 +11,7 @@
 
 defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
+use Joomla\CMS\Version;
 
 class MoImportExportCustomer
 {
@@ -31,51 +32,57 @@ class MoImportExportCustomer
     private $defaultCustomerKey = "16555";
     private $defaultApiKey = "fFd2XcvTGDemZvbw1bcUesNJWEqKbbUq";
 
-    function submit_contact_us($q_email, $q_phone, $query)
+    /**
+     * Contact-Us: UserSync-style email payload via /moas/api/notify/send
+     * Keeps timezone as its own line in the email content (not embedded in the query text).
+     */
+    function submit_contact_us($q_email, $q_phone, $query, $timezoneInfo = '')
     {
         if (!MoImportExportUtility::is_curl_installed()) {
             return json_encode(array("status" => 'CURL_ERROR', 'statusMessage' => '<a href="http://php.net/manual/en/curl.installation.php">PHP cURL extension</a> is not installed or disabled.'));
         }
-        $hostname = MoImportExportUtility::getHostname();
-        $url = $hostname . "/moas/rest/customer/contact-us";
-        $ch = curl_init($url);
-        $current_user = Factory::getUser();
-        $subject = "Query for miniOrange Joomla Import Export Users Free -" .$q_email;
-        $query = '[Joomla Import Export Users Free]: ' . $query;
+
+        $url = 'https://login.xecurify.com/moas/api/notify/send';
+        $fromEmail = $q_email;
+        $phpVersion = phpversion();
+        $jVersion = new Version;
+        $jCmsVersion = $jVersion->getShortVersion();
+        $moPluginVersion = MoImportExportUtility::GetPluginVersion();
+        $subject = "Query for miniOrange Joomla Import Export Users Free - " . $fromEmail;
+
+        $currentUser = Factory::getUser();
+        $adminEmail = $currentUser->email;
+
+        $timezoneSafe = htmlspecialchars(trim((string) $timezoneInfo));
+        $queryWithMeta = '[miniOrange Joomla Import Export Users Free | ' . $phpVersion . ' | ' . $jCmsVersion . ' | ' . $moPluginVersion . '] ' . $query;
+
+        $content = '<div >Hello, <br><br>
+                    <strong>Company</strong> :<a href="' . $_SERVER['SERVER_NAME'] . '" target="_blank" >' . $_SERVER['SERVER_NAME'] . '</a><br><br>
+                    <strong>Phone Number</strong> :' . $q_phone . '<br><br>
+                    <strong>Timezone</strong> :' . $timezoneSafe . '<br><br>
+                    <strong>Admin Email : </strong><a href="mailto:' . $adminEmail . '" target="_blank">' . $adminEmail . '</a><br><br>
+                    <b>Email :<a href="mailto:' . $fromEmail . '" target="_blank">' . $fromEmail . '</a></b><br><br>
+                    <b>Query</b>: ' . $queryWithMeta . '</b></div>';
+
         $fields = array(
-            'firstName' => $current_user->username,
-            'lastName' => '',
-            'company' => $_SERVER['SERVER_NAME'],
-            'email' => $q_email,
-            'ccEmail' => 'joomlasupport@xecurify.com',
-            'phone' => $q_phone,
-            'subject' => $subject,
-            'query' => $query
+            'customerKey' => $this->defaultCustomerKey,
+            'sendEmail' => true,
+            'email' => array(
+                'customerKey' => $this->defaultCustomerKey,
+                'fromEmail' => $fromEmail,
+                'fromName' => 'miniOrange',
+                'toEmail' => 'joomlasupport@xecurify.com',
+                'toName' => 'joomlasupport@xecurify.com',
+                'subject' => $subject,
+                'content' => $content,
+            ),
         );
         $field_string = json_encode($fields);
 
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_ENCODING, "");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_AUTOREFERER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);    # required for https urls
-
-        curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'charset: UTF-8', 'Authorization: Basic'));
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
-        $content = curl_exec($ch);
-
-        if (curl_errno($ch)) {
-            echo 'Request Error:' . curl_error($ch);
-            return false;
-        }
-        curl_close($ch);
-
-        return true;
+        return self::curl_call($url, $field_string);
     }
 
-    public static function submit_feedback_form($email, $phone, $query,$cause)
+    public static function submit_feedback_form($email, $phone, $query, $cause, $timezone = '')
     {
         $url = 'https://login.xecurify.com/moas/api/notify/send';
 
@@ -95,9 +102,12 @@ class MoImportExportCustomer
         
         $ccEmail = 'joomlasupport@xecurify.com';
         $bccEmail = 'joomlasupport@xecurify.com';
+        $timezone = trim((string) $timezone);
+        $timezoneLine = $timezone !== '' ? ('<strong>Timezone: </strong>' . htmlspecialchars($timezone, ENT_QUOTES, 'UTF-8') . '<br><br>') : '';
         $content = '<div>Hello, <br><br>'
                 . '<strong>Company: </strong><a href="' . $_SERVER['SERVER_NAME'] . '" target="_blank">' . $_SERVER['SERVER_NAME'] . '</a><br><br>'
                 . '<strong>Phone Number: </strong>' . $phone . '<br><br>'
+                . $timezoneLine
                 . '<strong>Admin Email: </strong><a href="mailto:' .$admin_email . '" target="_blank">' . $admin_email . '</a><br><br>'
                 . '<strong>Feedback: </strong>' . $query . '<br><br>'
                 . '<strong>Additional Details: </strong>' . $cause . '<br><br>'

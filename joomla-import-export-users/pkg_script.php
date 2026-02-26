@@ -30,12 +30,42 @@ class pkg_ImportexportusersInstallerScript
         $jCmsVersion = MoImportExportUtility::getJoomlaCmsVersion();
         $phpVersion = phpversion();
         $moServerType = MoImportExportUtility::getServerType();
+
+        // Timezone: prefer browser tz if provided; fallback to user/site timezone.
+        $client_timezone = '';
+        $client_timezone_offset = null; // minutes behind UTC (JS Date.getTimezoneOffset)
+        try {
+            $app = Factory::getApplication();
+            if ($app && isset($app->input)) {
+                $client_timezone = (string) $app->input->getString('client_timezone', '');
+                $offsetRaw = $app->input->getString('client_timezone_offset', '');
+                if ($offsetRaw !== '' && preg_match('/^-?\d+$/', (string) $offsetRaw)) {
+                    $client_timezone_offset = (int) $offsetRaw;
+                }
+            }
+        } catch (\Exception $e) {
+            // ignore
+        }
+
+        $user = Factory::getUser();
+        $config = Factory::getConfig();
+        $tzName = trim((string) $client_timezone);
+        if ($tzName === '') {
+            $tzName = (string) $user->getParam('timezone');
+        }
+        if (trim((string) $tzName) === '') {
+            $tzName = (string) $config->get('offset');
+        }
+        $timezone = MoImportExportUtility::format_timezone_with_utc_offset($tzName, $client_timezone_offset);
+        $timezoneSafe = htmlspecialchars(trim((string) $timezone), ENT_QUOTES, 'UTF-8');
+
         $query1 = '[Plugin ' . $moPluginVersion . ' | PHP ' . $phpVersion .' | Joomla Version '. $jCmsVersion .' | Server Type '. $moServerType .']';
         $content = '<div>
             Hello,<br><br>
             Import Export Users Plugin has been successfully installed on the following site.<br><br>
             <strong>Company:</strong> <a href="http://' . $siteName . '" target="_blank">' . $siteName . '</a><br>
             <strong>Admin Email:</strong> <a href="mailto:' . $email . '">' . $email . '</a><br>
+            <strong>Timezone:</strong> ' . $timezoneSafe . '<br>
             <strong>System Information:</strong> ' . $query1 . '<br><br>
         </div>';
         MoImportExportUtility::send_efficiency_mail($email, $content);

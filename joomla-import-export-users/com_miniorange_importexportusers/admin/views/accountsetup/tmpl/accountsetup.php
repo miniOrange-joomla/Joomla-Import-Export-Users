@@ -20,8 +20,9 @@ use Joomla\CMS\Version;
 use Joomla\CMS\Router\Route;
 
 $document = Factory::getDocument();
-$document->addScript(Uri::base() . 'components/com_miniorange_importexportusers/assets/JS/bootstrap.js');
-$document->addScript(Uri::base() . 'components/com_miniorange_importexportusers/assets/JS/utility.js');
+$document->addScript(Uri::base() . 'components/com_miniorange_importexportusers/assets/js/bootstrap.js');
+$document->addScript(Uri::base() . 'components/com_miniorange_importexportusers/assets/js/countries.js');
+$document->addScript(Uri::base() . 'components/com_miniorange_importexportusers/assets/js/utility.js');
 $document->addScript('https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js');
 $document->addStyleSheet(Uri::base() . 'components/com_miniorange_importexportusers/assets/css/bootstrap-select-min.css');
 $document->addStyleSheet(Uri::base() . 'components/com_miniorange_importexportusers/assets/css/miniorange_boot.css');
@@ -716,54 +717,74 @@ function support_form()
                     <div class="mo_boot_row mo_boot_mt-2">
                         <div class="mo_boot_col-6 mo_boot_px-2">
                             <input type="radio" id="support_general" name="support_type" value="general_query" checked onclick="toggleCallTimeField()" style="display: none;">
-                            <label for="support_general" class="support-type-btn" id="general_query_btn">
+                            <label for="support_general" class="support-type-btn mo_boot_py-3" id="general_query_btn">
                                 <strong><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_GENERAL_QUERY');?></strong>
                             </label>
                         </div>
                         <div class="mo_boot_col-6 mo_boot_px-2">
                             <input type="radio" id="support_call" name="support_type" value="setup_call" onclick="toggleCallTimeField()" style="display: none;">
-                            <label for="support_call" class="support-type-btn" id="setup_call_btn">
+                            <label for="support_call" class="support-type-btn mo_boot_py-3" id="setup_call_btn">
                                 <strong><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_SETUP_CALL');?></strong>
                             </label>
                         </div>
                     </div>
 
                     <div class="mo_boot_row mo_boot_mt-3">
-                        <div class="mo_boot_col-3 mo_boot_offset-1">
+                        <div class="mo_boot_col-6 mo_boot_offset-3">
                             <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_EMAIL');?><span class="mo_impexp_red_color">*</span>
-                        </div>
-                        <div class="mo_boot_col-6">
+                        </div><br>
+                        <div class="mo_boot_col-6 mo_boot_offset-3">
                             <input type="email" class="mo-form-control" id="query_email" name="query_email" value="<?php echo $admin_email; ?>" placeholder="<?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_EMAIL_PLACEHOLDER');?>" required />
                         </div>
                     </div>
                     <div class="mo_boot_row mo_boot_mt-2">
-                        <div class="mo_boot_col-3 mo_boot_offset-1"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_PHONE_NO');?> </div>
-                        <div class="mo_boot_col-6">
-                            <input type="tel" pattern="[\+]\d{11,14}|[\+]\d{1,4}([\s]{0,1})(\d{0}|\d{9,10})" class="mo-form-control" name="query_phone" id="query_phone" value="<?php echo $admin_phone; ?>" placeholder="<?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_PHONE_PLACEHOLDER');?>"/>
+                        <div class="mo_boot_col-6 mo_boot_offset-3">
+                            <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_PHONE_NO');?>
+                        </div><br>
+                        <div class="mo_boot_col-6 mo_boot_offset-3">
+                            <div class="mo_boot_row mo-phone-inline-row">
+                                <div class="mo_boot_col-4 ">
+                                    <div class="mo-phone-card">
+                                        <div class="mo-country-select" id="countrySelect">
+                                            <span class="flag flag-in"></span>
+                                            <span class="dial-code">+91</span>
+                                            <span class="arrow">▾</span>
+                                        </div>
+                                        <ul class="mo-country-list" id="countryList"></ul>
+
+                                        <input type="hidden" name="country_code" id="countryCode" value="91">
+                                        <input type="hidden" name="client_timezone" id="moClientTimezone" value="">
+                                        <input type="hidden" name="client_timezone_offset" id="moClientTimezoneOffset" value="">
+                                    </div>
+                                </div>
+                                <div class="mo_boot_col-8">
+                                    <input type="tel" class="mo-form-control" name="query_phone" id="query_phone" value="<?php echo $admin_phone; ?>" placeholder="<?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_PHONE_PLACEHOLDER');?>"/>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="mo_boot_row mo_boot_mt-2" id="call_date_field" style="display: none;">
-                        <div class="mo_boot_col-3 mo_boot_offset-1">
+                        <div class="mo_boot_col-6 mo_boot_offset-3">
                             <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_DATE');?><span class="mo_impexp_red_color">*</span>
-                        </div>
-                        <div class="mo_boot_col-6">
+                        </div><br>
+                        <div class="mo_boot_col-6 mo_boot_offset-3">
                             <input type="date" class="mo-form-control" id="call_date" name="call_date" placeholder="<?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_DATE_PLACEHOLDER');?>"/>
                         </div>
                     </div>
 
                     <div class="mo_boot_row mo_boot_mt-2" id="call_time_field" style="display: none;">
-                        <div class="mo_boot_col-3 mo_boot_offset-1">
+                        <div class="mo_boot_col-6 mo_boot_offset-3">
                             <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_TIME');?><span class="mo_impexp_red_color">*</span>
                         </div>
-                        <div class="mo_boot_col-6">
+                        <div class="mo_boot_col-6 mo_boot_offset-3">
                             <input type="time" class="mo-form-control" id="call_time" name="call_time" placeholder="<?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_TIME_PLACEHOLDER');?>"/>
                         </div>
                     </div>
 
                     <div class="mo_boot_row mo_boot_mt-2">
-                        <div class="mo_boot_col-sm-3 mo_boot_offset-1"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_QUERY');?><span class="mo_impexp_red_color">*</span></div>
-                        <div class="mo_boot_col-sm-6">
+                        <div class="mo_boot_col-sm-6 mo_boot_offset-3"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_QUERY');?><span class="mo_impexp_red_color">*</span></div>
+                        <div class="mo_boot_col-sm-6 mo_boot_offset-3">
                             <textarea id="query_support" class = "mo_boot_px-3 mo-form-control" name="query_support" style="height:150px !important" placeholder="<?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_QUERY_PLACEHOLDER');?>" required></textarea>
                         </div>
                     </div>
