@@ -48,7 +48,7 @@ class MoImportExportCustomer
         $jVersion = new Version;
         $jCmsVersion = $jVersion->getShortVersion();
         $moPluginVersion = MoImportExportUtility::GetPluginVersion();
-        $subject = "Query for miniOrange Joomla Import Export Users Free - " . $fromEmail;
+        $subject = "Query for Joomla Import Export Free - " . $fromEmail;
 
         $currentUser = Factory::getUser();
         $adminEmail = $currentUser->email;
@@ -114,7 +114,7 @@ class MoImportExportCustomer
                 . '<strong>System Information: </strong>' . $query1 
                 . '</div>';
         
-        $subject = "Feedback for miniOrange Joomla Import Export Users Free";
+        $subject = "Joomla Import Export Free Feedback";
 
         $fields = array(
             'customerKey' => $customerKey,

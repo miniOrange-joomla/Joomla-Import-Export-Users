@@ -85,12 +85,17 @@ $jcms_version = $j_version->getShortVersion();
                 <?php echo Text::_($tab['text']); ?>
             </a>
         <?php endforeach; ?>
+        <a id="add_on_tab" 
+            class="mo_boot_col mo_boot_py-3 mo_importexport_support-tab <?php echo $impexp_settings_tab == 'addon' ? 'mo_nav_tab_active' : ''; ?>"
+            href="index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=addon">
+            &#11088; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADD_ON'); ?>
+        </a>
     </div>
 </div>
 <div class="tab-content" id="myTabContent">
     <div id="overview" class="tab-pane <?php if ($impexp_settings_tab == 'overview') echo 'active'; ?>">
         <div class="mo_boot_row">
-            <div class="mo_boot_col-sm-12 mo_import_export_tab">
+            <div class="mo_boot_col-sm-12 mo_boot_mt-2 mo_import_export_tab">
                 <?php plugin_overview(); ?>
             </div> 
         </div>
@@ -98,7 +103,7 @@ $jcms_version = $j_version->getShortVersion();
 
     <div id="export_configuration" class="tab-pane <?php if ($impexp_settings_tab == 'exportsettings') echo 'active'; ?>">
         <div class="mo_boot_row">
-            <div class="mo_boot_col-sm-12 mo_import_export_tab">
+            <div class="mo_boot_col-sm-12 mo_boot_mt-2 mo_import_export_tab">
                 <?php export_configuration(); ?>
             </div>
         </div>
@@ -106,7 +111,7 @@ $jcms_version = $j_version->getShortVersion();
 
     <div id="import_configuration" class="tab-pane <?php if ($impexp_settings_tab == 'importsettings') echo 'active'; ?>">
         <div class="mo_boot_row">
-            <div class="mo_boot_col-sm-12 mo_import_export_tab">
+            <div class="mo_boot_col-sm-12 mo_boot_mt-2 mo_import_export_tab">
                 <?php import_configuration(); ?>
             </div>
         </div>
@@ -114,7 +119,7 @@ $jcms_version = $j_version->getShortVersion();
 
     <div id="cron_import" class="tab-pane <?php if ($impexp_settings_tab == 'cronimport') echo 'active'; ?>">
         <div class="mo_boot_row">
-            <div class="mo_boot_col-sm-12 mo_import_export_tab">
+            <div class="mo_boot_col-sm-12 mo_boot_mt-2 mo_import_export_tab">
                 <?php cron_import(); ?>
             </div>
         </div>
@@ -122,7 +127,7 @@ $jcms_version = $j_version->getShortVersion();
 
     <div id="licensing_page" class="tab-pane <?php if ($impexp_settings_tab == 'license_page') echo 'active'; ?>">
         <div class="mo_boot_row">
-            <div class="mo_boot_col-sm-12 mo_import_export_tab"> 
+            <div class="mo_boot_col-sm-12 mo_boot_mt-2 mo_import_export_tab"> 
                 <?php license_page(); ?>
             </div>
         </div>
@@ -130,10 +135,18 @@ $jcms_version = $j_version->getShortVersion();
 
     <div id="contact_us" class="tab-pane <?php echo $impexp_settings_tab == 'contact_us' ? 'active' : ''; ?>">
 			<div class="mo_boot_row">
-				<div class="mo_boot_col-sm-12 mo_import_export_tab" >
+				<div class="mo_boot_col-sm-12 mo_boot_mt-2 mo_import_export_tab" >
 					<?php support_form();?>
 				</div>
 			</div>
+    </div>
+
+    <div id="addon_pane" class="tab-pane <?php if ($impexp_settings_tab == 'addon') echo 'active'; ?>">
+        <div class="mo_boot_row">
+            <div class="mo_boot_col-sm-12 mo_boot_mt-2 mo_import_export_tab">
+                <?php add_on(); ?>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -153,7 +166,23 @@ function plugin_overview()
                             <a class="mo_boot_btn btn-users_sync mo_boot_px-3 mo_boot_mx-1" target="_blank" href="https://plugins.miniorange.com/import-export-users-for-joomla"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_VISIT_SITE');?></a>
                             <a class="mo_boot_btn btn-users_sync mo_boot_px-3 mo_boot_mx-1" href="<?php echo Uri::root().'administrator/index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=license_page';?>"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_LICENSE_PLAN');?></a>
                             <a class="mo_boot_btn btn-users_sync mo_boot_px-3 mo_boot_mx-1" target="_blank" href="https://plugins.miniorange.com/joomla-import-export-users"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_GUIDES');?></a>
-                            <a class="mo_boot_btn btn-users_sync mo_boot_px-3 mo_boot_mx-1" target="_blank" href="https://faq.miniorange.com/kb/joomla/">FAQ</a>
+                            <a class="mo_boot_btn btn-users_sync mo_boot_px-3 mo_boot_mx-1" target="_blank" href="https://faq.miniorange.com/kb/joomla/"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_OVERVIEW_FAQ_BTN'); ?></a>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning">
+                        <div class="mo_boot_row">
+                            <div class="mo_boot_col-1">
+                                <div class="mo_crown_box">
+                                    <i class="fa-solid fa-crown mo_crown_img"></i>
+                                </div>
+                            </div>
+                            <div class="mo_boot_col-9">
+                                <strong><h4><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_OVERVIEW_WANT_MORE'); ?></h4></strong>
+                                <p><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_OVERVIEW_MOVE_CONTENT'); ?></p>
+                            </div>
+                            <div class="mo_boot_col-2">
+                                <a class="mo_boot_btn mo_boot_px-4 mo_boot_py-1 mo_btn_learn_more" href="<?php echo Route::_('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=addon'); ?>"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_OVERVIEW_LEARN_MORE'); ?></a>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -162,6 +191,197 @@ function plugin_overview()
     </div>
     <?php
 
+}
+
+
+function add_on(){
+    ?>
+    <div class="mo_boot_container-fluid mo_boot_m-0 mo_boot_p-0">
+
+        <!-- Hero Banner -->
+        <div class="mo_addon_hero mo_boot_row mo_boot_m-0 mo_boot_mt-3">
+            <div class="mo_boot_col-12 mo_boot_text-center mo_boot_py-4 mo_boot_px-3">
+                <h2 class="mo_addon_hero_title"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_HERO_TITLE'); ?></h2>
+                <p class="mo_addon_hero_sub">
+                    <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_HERO_SUB'); ?>
+                </p>
+                <a class="mo_addon_hero_btn" href="<?php echo Route::_('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us'); ?>">
+                    <i class="fa-solid fa-envelope"></i>&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_CONTACT_UNLOCK'); ?>
+                </a>
+            </div>
+        </div>
+
+        <!-- What You Already Have vs What You Get -->
+        <div class="mo_boot_row mo_boot_p-4">
+            <div class="mo_boot_col-12">
+                <h3 class="mo_import_export_heading"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_WHAT_CAN'); ?></h3>
+                <br>
+                <div class="mo_boot_row mo_boot_mt-3">
+
+                    <!-- Users card (current / active) -->
+                    <div class="mo_boot_col-3 mo_boot_mb-3">
+                        <div class="mo_addon_feature_card mo_addon_card_active">
+                            <div class="mo_addon_card_icon_wrap mo_addon_card_icon_active">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div class="mo_addon_card_badge mo_addon_badge_premium">
+                                <i class="fa-solid fa-crown mo_impexpusers_badge_color"></i> <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_PREMIUM_OFFERING'); ?>
+                            </div>
+                            <h4 class="mo_addon_card_title"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_USERS_TITLE'); ?></h4>
+                            <p class="mo_addon_card_desc"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_USERS_DESC'); ?></p>
+                            <ul class="mo_addon_feature_list">
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_USERS_F1'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_USERS_F2'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_USERS_F3'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_USERS_F4'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_USERS_F5'); ?></li>
+                            </ul>
+                            <div class="mo_addon_card_footer">
+                                <a href="<?php echo Route::_('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us'); ?>" class="mo_boot_btn btn-users_sync mo_boot_px-3"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_GET_THIS'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content card -->
+                    <div class="mo_boot_col-3 mo_boot_mb-3">
+                        <div class="mo_addon_feature_card mo_addon_card_premium">
+                            <div class="mo_addon_card_icon_wrap">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </div>
+                            <div class="mo_addon_card_badge mo_addon_badge_premium">
+                                <i class="fa-solid fa-crown mo_impexpusers_badge_color"></i> <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_PREMIUM_OFFERING'); ?>
+                            </div>
+                            <h4 class="mo_addon_card_title"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_CONTENT_TITLE'); ?></h4>
+                            <p class="mo_addon_card_desc"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_CONTENT_DESC'); ?></p>
+                            <ul class="mo_addon_feature_list">
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_CONTENT_F1'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_CONTENT_F2'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_CONTENT_F3'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_CONTENT_F4'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_CONTENT_F5'); ?></li>
+                            </ul>
+                            <div class="mo_addon_card_footer">
+                                <a href="<?php echo Route::_('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us'); ?>" class="mo_boot_btn btn-users_sync mo_boot_px-3"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_GET_THIS'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Media card -->
+                    <div class="mo_boot_col-3 mo_boot_mb-3">
+                        <div class="mo_addon_feature_card mo_addon_card_premium">
+                            <div class="mo_addon_card_icon_wrap">
+                                <i class="fa-solid fa-images"></i>
+                            </div>
+                            <div class="mo_addon_card_badge mo_addon_badge_premium">
+                                <i class="fa-solid fa-crown mo_impexpusers_badge_color"></i> <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_PREMIUM_OFFERING'); ?>
+                            </div>
+                            <h4 class="mo_addon_card_title"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_MEDIA_TITLE'); ?></h4>
+                            <p class="mo_addon_card_desc"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_MEDIA_DESC'); ?></p>
+                            <ul class="mo_addon_feature_list">
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_MEDIA_F1'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_MEDIA_F2'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_MEDIA_F3'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_MEDIA_F4'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_MEDIA_F5'); ?></li>
+                            </ul>
+                            <div class="mo_addon_card_footer">
+                                <a href="<?php echo Route::_('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us'); ?>" class="mo_boot_btn btn-users_sync mo_boot_px-3"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_GET_THIS'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Extensions card -->
+                    <div class="mo_boot_col-3 mo_boot_mb-3">
+                        <div class="mo_addon_feature_card mo_addon_card_premium">
+                            <div class="mo_addon_card_icon_wrap">
+                                <i class="fa-solid fa-puzzle-piece"></i>
+                            </div>
+                            <div class="mo_addon_card_badge mo_addon_badge_premium">
+                                <i class="fa-solid fa-crown mo_impexpusers_badge_color"></i> <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_PREMIUM_OFFERING'); ?>
+                            </div>
+                            <h4 class="mo_addon_card_title"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_EXT_TITLE'); ?></h4>
+                            <p class="mo_addon_card_desc"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_EXT_DESC'); ?></p>
+                            <ul class="mo_addon_feature_list">
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_EXT_F1'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_EXT_F2'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_EXT_F3'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_EXT_F4'); ?></li>
+                                <li>&#9989;&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_EXT_F5'); ?></li>
+                            </ul>
+                            <div class="mo_addon_card_footer">
+                                <a href="<?php echo Route::_('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us'); ?>" class="mo_boot_btn btn-users_sync mo_boot_px-3"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_GET_THIS'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <hr class="mo_impexpuser_hr_margin">
+
+        <!-- How It Works -->
+        <div class="mo_boot_row mo_boot_px-4 mo_boot_py-3">
+            <div class="mo_boot_col-12">
+                <h3 class="mo_import_export_heading"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_HOW_TO_GET'); ?></h3>
+                <br>
+                <div class="mo_boot_row mo_boot_mt-3">
+                    <div class="mo_boot_col-4">
+                        <div class="mo_addon_step">
+                            <div class="mo_addon_step_num">1</div>
+                            <div class="mo_addon_step_body">
+                                <h5><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_STEP1_TITLE'); ?></h5>
+                                <p><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_STEP1_DESC'); ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mo_boot_col-4">
+                        <div class="mo_addon_step">
+                            <div class="mo_addon_step_num">2</div>
+                            <div class="mo_addon_step_body">
+                                <h5><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_STEP2_TITLE'); ?></h5>
+                                <p><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_STEP2_DESC'); ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mo_boot_col-4">
+                        <div class="mo_addon_step">
+                            <div class="mo_addon_step_num">3</div>
+                            <div class="mo_addon_step_body">
+                                <h5><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_STEP3_TITLE'); ?></h5>
+                                <p><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_STEP3_DESC'); ?></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="mo_impexpuser_hr_margin">
+
+        <!-- CTA Banner -->
+        <div class="mo_boot_row mo_boot_px-4 mo_boot_py-4">
+            <div class="mo_boot_col-12">
+                <div class="mo_addon_cta_box">
+                    <i class="fa-solid fa-rocket mo_addon_cta_icon"></i>
+                    <h3 class="mo_addon_cta_title"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_CTA_TITLE'); ?></h3>
+                    <p class="mo_addon_cta_desc"><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_CTA_DESC'); ?></p>
+                    <div>
+                        <a class="mo_boot_btn btn-users_sync mo_boot_px-4 mo_boot_mx-2"
+                           href="<?php echo Route::_('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us'); ?>">
+                            <i class="fa-solid fa-envelope"></i>&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_CONTACT_NOW'); ?>
+                        </a>
+                        <a class="mo_addon_visit_btn mo_boot_px-4 mo_boot_mx-2"
+                           target="_blank" href="https://plugins.miniorange.com/import-export-users-for-joomla">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>&nbsp; <?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_ADDON_VISIT_PLUGIN'); ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <?php
 }
 
 function export_configuration()
@@ -717,7 +937,7 @@ function support_form()
                     <div class="mo_boot_row mo_boot_mt-2">
                         <div class="mo_boot_col-6 mo_boot_px-2">
                             <input type="radio" id="support_general" name="support_type" value="general_query" checked onclick="toggleCallTimeField()" style="display: none;">
-                            <label for="support_general" class="support-type-btn mo_boot_py-3" id="general_query_btn">
+                            <label for="support_general" class="support-type-btn mo_boot_py-3 active" id="general_query_btn">
                                 <strong><?php echo Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_GENERAL_QUERY');?></strong>
                             </label>
                         </div>

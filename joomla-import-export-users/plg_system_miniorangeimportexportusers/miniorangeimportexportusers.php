@@ -197,7 +197,7 @@ class plgSystemMiniorangeimportexportusers extends CMSPlugin
                             <div class="form-style-6 mo_boot_offset-4 mo_boot_col-4 mo_boot_mt-2 mo_boot_p-4">
                                 <form name="f" method="post" action="" id="mojspfree_feedback_form_close">
                                     <h1 class="mo_feedback_heading">
-                                        Feedback form for Joomla Import Export Users Free Plugin
+                                        Feedback for miniOrange Import Export User plugin
 
                                         <span class="mo_close_icon" onclick="skipImportExportForm()" aria-label="Close">
                                             &times;
