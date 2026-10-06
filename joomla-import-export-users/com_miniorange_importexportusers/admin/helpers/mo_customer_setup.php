@@ -10,7 +10,6 @@
  */
 
 defined('_JEXEC') or die('Restricted access');
-use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
 
 class MoImportExportCustomer
@@ -50,9 +49,6 @@ class MoImportExportCustomer
         $moPluginVersion = MoImportExportUtility::GetPluginVersion();
         $subject = "Query for Joomla Import Export Free - " . $fromEmail;
 
-        $currentUser = Factory::getUser();
-        $adminEmail = $currentUser->email;
-
         $timezoneSafe = htmlspecialchars(trim((string) $timezoneInfo));
         $queryWithMeta = '[miniOrange Joomla Import Export Users Free | ' . $phpVersion . ' | ' . $jCmsVersion . ' | ' . $moPluginVersion . '] ' . $query;
 
@@ -60,7 +56,6 @@ class MoImportExportCustomer
                     <strong>Company</strong> :<a href="' . $_SERVER['SERVER_NAME'] . '" target="_blank" >' . $_SERVER['SERVER_NAME'] . '</a><br><br>
                     <strong>Phone Number</strong> :' . $q_phone . '<br><br>
                     <strong>Timezone</strong> :' . $timezoneSafe . '<br><br>
-                    <strong>Admin Email : </strong><a href="mailto:' . $adminEmail . '" target="_blank">' . $adminEmail . '</a><br><br>
                     <b>Email :<a href="mailto:' . $fromEmail . '" target="_blank">' . $fromEmail . '</a></b><br><br>
                     <b>Query</b>: ' . $queryWithMeta . '</b></div>';
 
@@ -90,13 +85,10 @@ class MoImportExportCustomer
         $apiKey = "fFd2XcvTGDemZvbw1bcUesNJWEqKbbUq";
         $fromEmail = $email;
         $phpVersion = phpversion();
-        $dVar=new JConfig();
-        $check_email = $dVar->mailfrom;
         $jCmsVersion =  MoImportExportUtility::getJoomlaCmsVersion();
         $moPluginVersion =  MoImportExportUtility::GetPluginVersion();
         $os_version    = MoImportExportUtility::_get_os_info();
         $pluginName    = 'Import Export Users Free Plugin';
-        $admin_email   = !empty($email)?$email:$check_email;
         
         $query1 = '['.$pluginName.' | '.$moPluginVersion.' | PHP ' . $phpVersion.' | OS ' . $os_version.'] ';
         
@@ -108,7 +100,6 @@ class MoImportExportCustomer
                 . '<strong>Company: </strong><a href="' . $_SERVER['SERVER_NAME'] . '" target="_blank">' . $_SERVER['SERVER_NAME'] . '</a><br><br>'
                 . '<strong>Phone Number: </strong>' . $phone . '<br><br>'
                 . $timezoneLine
-                . '<strong>Admin Email: </strong><a href="mailto:' .$admin_email . '" target="_blank">' . $admin_email . '</a><br><br>'
                 . '<strong>Feedback: </strong>' . $query . '<br><br>'
                 . '<strong>Additional Details: </strong>' . $cause . '<br><br>'
                 . '<strong>System Information: </strong>' . $query1 

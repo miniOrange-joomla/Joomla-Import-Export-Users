@@ -19,6 +19,8 @@ use Joomla\CMS\User\User;
 use Joomla\CMS\User\UserHelper;
 use Joomla\CMS\String\PunycodeHelper;
 use Joomla\CMS\Installer\Installer;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\HTML\HTMLHelper;
 jimport('joomla.plugin.plugin');
 
 include_once JPATH_SITE . DIRECTORY_SEPARATOR . 'administrator' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_miniorange_importexportusers' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'mo_importexport_utility.php';
@@ -47,7 +49,12 @@ class plgSystemMiniorangeimportexportusers extends CMSPlugin
 
 
         if (isset($post['mojsp_feedback']) || isset($post['mojspfree_skip_feedback'])) {
-        
+            $user = Factory::getUser();
+            $isAdmin = method_exists($app, 'isClient') ? $app->isClient('administrator') : $app->isAdmin();
+            if (!$isAdmin || !$user->authorise('core.manage', 'com_installer') || !Session::checkToken()) {
+                return;
+            }
+
             if($tab)
             {
                 $radio = isset($post['deactivate_plugin'])? $post['deactivate_plugin']:'';
@@ -89,22 +96,25 @@ class plgSystemMiniorangeimportexportusers extends CMSPlugin
                 }
                 $timezone = trim((string) MoImportExportUtility::format_timezone_with_utc_offset($tzName, $client_timezone_offset));
     
-                if(isset($post['mojspfree_skip_feedback']))
-                {
-                    $data1='Skipped the feedback';
-                }
-    
-                if(file_exists(JPATH_BASE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_miniorange_importexportusers' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'mo_customer_setup.php'))
+                if (!isset($post['mojspfree_skip_feedback'])
+                    && file_exists(JPATH_BASE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_miniorange_importexportusers' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'mo_customer_setup.php'))
                 {
                     require_once JPATH_BASE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_miniorange_importexportusers' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'mo_customer_setup.php';
-    
+
                     MoImportExportCustomer::submit_feedback_form($admin_email, $admin_phone, $data1,'', $timezone);
                 }
               
                 require_once JPATH_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Installer' . DIRECTORY_SEPARATOR . 'Installer.php';
     
-                foreach ($post['result'] as $fbkey) {
-    
+                $allowed = array('com_miniorange_importexportusers', 'miniorangeimportexportusers', 'pkg_importexportusers');
+
+                foreach ((array) ($post['result'] ?? array()) as $fbkey) {
+                    $fbkey = (int) $fbkey;
+                    $element = MoImportExportUtility::loadDBValues('#__extensions', 'loadResult', 'element', 'extension_id', $fbkey);
+                    if (!in_array($element, $allowed, true)) {
+                        continue;
+                    }
+
                     $result = MoImportExportUtility::loadDBValues('#__extensions', 'loadColumn','type',  'extension_id', $fbkey);
                     $identifier = $fbkey;
                     $type = 0;
@@ -196,6 +206,7 @@ class plgSystemMiniorangeimportexportusers extends CMSPlugin
                             <link rel="stylesheet" type="text/css" href="<?php echo URI::base();?>/components/com_miniorange_importexportusers/assets/css/miniorange_boot.css" />
                             <div class="form-style-6 mo_boot_offset-4 mo_boot_col-4 mo_boot_mt-2 mo_boot_p-4">
                                 <form name="f" method="post" action="" id="mojspfree_feedback_form_close">
+                                    <?php echo HTMLHelper::_('form.token'); ?>
                                     <h1 class="mo_feedback_heading">
                                         Feedback for miniOrange Import Export User plugin
 
@@ -206,12 +217,13 @@ class plgSystemMiniorangeimportexportusers extends CMSPlugin
                                         <input type="hidden" name="mojspfree_skip_feedback" value="mojspfree_skip_feedback"/>
                                     </h1>
                                     <?php
-                                        foreach ($tpostData['cid'] as $key) { ?>
-                                            <input type="hidden" name="result[]" value=<?php echo $key ?>>
+                                        foreach ((array) ($tpostData['cid'] ?? array()) as $key) { ?>
+                                            <input type="hidden" name="result[]" value="<?php echo (int) $key; ?>">
                                         <?php }
                                     ?>
                                 </form>
                                 <form name="f" method="post" action="" id="mojsp_feedback" style="background: #f3f1f1; padding: 10px;">
+                                    <?php echo HTMLHelper::_('form.token'); ?>
                                     <h3>What Happened? </h3>
                                     <input type="hidden" name="mojsp_feedback" value="mojsp_feedback"/>
                                     <input type="hidden" name="client_timezone" id="mo_client_timezone" value="" />
@@ -245,8 +257,8 @@ class plgSystemMiniorangeimportexportusers extends CMSPlugin
                                             </tr>
     
                                             <?php
-                                            foreach ($tpostData['cid'] as $key) { ?>
-                                                <input type="hidden" name="result[]" value=<?php echo $key ?>>
+                                            foreach ((array) ($tpostData['cid'] ?? array()) as $key) { ?>
+                                                <input type="hidden" name="result[]" value="<?php echo (int) $key; ?>">
                                             <?php } ?>
                                             <br><br>
                                             <div style="text-align:center">
