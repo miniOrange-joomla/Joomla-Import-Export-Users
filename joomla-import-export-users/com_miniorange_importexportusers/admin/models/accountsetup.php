@@ -8,18 +8,18 @@
  * @license     GNU General Public License version 3; see LICENSE.txt
  * @contact     info@xecurify.com
  */
- 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
-use Joomla\CMS\MVC\Model\AdminModel; 
+use Joomla\CMS\MVC\Model\AdminModel;
 /**
  * AccountSetup Model
  *
  * @since  0.0.1
  */
-class miniorangeimportexportusersModelAccountSetup extends AdminModel
+class MiniorangeimportexportusersModelAccountSetup extends AdminModel
 {
-	
+
 	/**
 	 * Method to get the record form.
 	 *
@@ -30,8 +30,8 @@ class miniorangeimportexportusersModelAccountSetup extends AdminModel
 	 *
 	 * @since   1.6
 	 */
-	
-	
+
+
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Get the form.
@@ -43,12 +43,12 @@ class miniorangeimportexportusersModelAccountSetup extends AdminModel
 				'load_data' => $loadData
 			)
 		);
- 
+
 		if (empty($form))
 		{
 			return false;
 		}
- 
+
 		return $form;
 	}
 }

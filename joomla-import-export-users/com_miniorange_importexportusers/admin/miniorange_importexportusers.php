@@ -8,7 +8,7 @@
  * @license     GNU General Public License version 3; see LICENSE.txt
  * @contact     info@xecurify.com
  */
- 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
@@ -28,15 +28,15 @@ if (!Factory::getUser()->authorise('core.manage', 'com_miniorange_importexportus
 jimport('joomla.application.component.controller');
 
 JLoader::registerPrefix('miniorange_pagerestriction', JPATH_COMPONENT_ADMINISTRATOR);
- 
+
 // Get an instance of the controller prefixed by JoomlaImportExport
 $controller = BaseController::getInstance('MiniorangeImportExportUsers');
- 
+
 // Perform the Request task
 $app = Factory::getApplication();
 $input = method_exists($app, 'getInput') ? $app->getInput() : $app->input;
 $task = ($input && method_exists($input, 'get')) ? $input->get('task') : '';
 $controller->execute($task);
- 
+
 // Redirect if set by the controller
 $controller->redirect();

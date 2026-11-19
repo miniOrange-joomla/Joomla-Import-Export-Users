@@ -20,37 +20,41 @@ use Joomla\CMS\MVC\View\HtmlView;
  *
  * @since  0.0.1
  */
-class miniorangeimportexportusersViewAccountSetup extends HtmlView
+class MiniorangeimportexportusersViewAccountSetup extends HtmlView
 {
-    function display($tpl = null)
-    {
-        $this->lists = $this->get('List');
-        //$this->pagination	= $this->get('Pagination');
+	public function display($tpl = null)
+	{
+		$this->lists = $this->get('List');
 
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            Factory::getApplication()->enqueueMessage(500, implode('<br />', $errors));
+		// $this->pagination = $this->get('Pagination');
 
-            return false;
-        }
-        $this->setLayout('accountsetup');
-        // Set the toolbar
-        $this->addToolBar();
+		// Check for errors.
+		if (count($errors = $this->get('Errors')))
+		{
+			Factory::getApplication()->enqueueMessage(500, implode('<br />', $errors));
 
-        // Display the template
-        parent::display($tpl);
-    }
+			return false;
+		}
 
-    /**
-     * Add the page title and toolbar.
-     *
-     * @return  void
-     *
-     * @since   1.6
-     */
-    protected function addToolBar()
-    {
-        ToolBarHelper::title(Text::_('COM_MINIORANGE_PAGE_PLUGIN_TITLE'), 'mo_page_logo mo_page_icon');
-    }
+		$this->setLayout('accountsetup');
+
+		// Set the toolbar
+		$this->addToolBar();
+
+		// Display the template
+		parent::display($tpl);
+	}
+
+	/**
+	 * Add the page title and toolbar.
+	 *
+	 * @return  void
+	 *
+	 * @since   1.6
+	 */
+	protected function addToolBar()
+	{
+		ToolBarHelper::title(Text::_('COM_MINIORANGE_PAGE_PLUGIN_TITLE'), 'mo_page_logo mo_page_icon');
+	}
 
 }

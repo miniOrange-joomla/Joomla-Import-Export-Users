@@ -15,167 +15,203 @@ use Joomla\CMS\Language\Text;
 
 class MiniorangeImportExportUsersControllerAccountsetup extends FormController
 {
-    function __construct()
-    {
-        $this->view_list = 'accountsetup';
-        parent::__construct();
-    }
+	public function __construct()
+	{
+		$this->view_list = 'accountsetup'; // phpcs:ignore Joomla.NamingConventions.ValidVariableName.MemberNotCamelCaps -- Joomla FormController property.
+		parent::__construct();
+	}
 
-    function exportUsers()
-    {
-        $app = Factory::getApplication();
-        $input = method_exists($app, 'getInput') ? $app->getInput() : $app->input;
-        $post = ($input && $input->post) ? $input->post->getArray() : [];
+	public function exportUsers()
+	{
+		$app = Factory::getApplication();
+		$input = method_exists($app, 'getInput') ? $app->getInput() : $app->input;
+		$post = ($input && $input->post) ? $input->post->getArray() : [];
 
-        if (count($post) == 0) {
-            $this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=exportsettings');
-            return;
-        }
+		if (count($post) == 0)
+		{
+			$this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=exportsettings');
 
-        $enable_export_users = isset($post['enable_export_users']) ? $post['enable_export_users'] : 0;
+			return;
+		}
 
-        MoImportExportUtility::updateDBValue('#__miniorange_exportusers', 'enable_export_users', $enable_export_users);
+		$enableExportUsers = isset($post['enable_export_users']) ? $post['enable_export_users'] : 0;
 
-        $message = Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_PLUGIN_MSG_EXPORT_USERS');
-        $this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=exportsettings', $message);
+		MoImportExportUtility::updateDBValue('#__miniorange_exportusers', 'enable_export_users', $enableExportUsers);
 
-        $user_data = MoImportExportUtility::readUsersTableData();
+		$message = Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_PLUGIN_MSG_EXPORT_USERS');
+		$this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=exportsettings', $message);
 
-        if(isset($post['export_groups']) && $post['export_groups'] == 'Export Groups')
-        {
-            MoImportExportUtility::exportUserGroups();
-        }
-        $this->download_file($user_data);
-    }
+		$userData = MoImportExportUtility::readUsersTableData();
 
-    function download_file($user_data)
-    {
-        MoImportExportUtility::downloadCSVFile($user_data);
-    }
+		if (isset($post['export_groups']) && $post['export_groups'] == 'Export Groups')
+		{
+			MoImportExportUtility::exportUserGroups();
+		}
 
-    function contactUs()
-    {
-        $app = Factory::getApplication();
-        $input = method_exists($app, 'getInput') ? $app->getInput() : $app->input;
-        $post = ($input && $input->post) ? $input->post->getArray() : [];
+		MoImportExportUtility::downloadCSVFile($userData);
+	}
 
-        if (count($post) == 0) {
-            $this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us');
-            return;
-        }
+	public function contactUs()
+	{
+		$app = Factory::getApplication();
+		$input = method_exists($app, 'getInput') ? $app->getInput() : $app->input;
+		$post = ($input && $input->post) ? $input->post->getArray() : [];
 
-        $query_email = isset($post['query_email']) ? $post['query_email'] : '';
-        $query = isset($post['query_support']) ? $post['query_support'] : '';
-        $phone = isset($post['query_phone']) ? $post['query_phone'] : '';
-        $country_code = isset($post['country_code']) ? $post['country_code'] : '';
-        $client_timezone = isset($post['client_timezone']) ? $post['client_timezone'] : '';
-        $client_timezone_offset = isset($post['client_timezone_offset']) ? $post['client_timezone_offset'] : '';
-        $support_type = isset($post['support_type']) ? $post['support_type'] : 'general_query';
-        $call_date = isset($post['call_date']) ? $post['call_date'] : '';
-        $call_time = isset($post['call_time']) ? $post['call_time'] : '';
+		if (count($post) == 0)
+		{
+			$this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us');
 
-        if (MoImportExportUtility::check_empty_or_null($query_email) || MoImportExportUtility::check_empty_or_null($query)) {
-            $this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us', Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_MSG_SUBMIT_QUERY'),'error');
-            return;
-        }
-        
-        // Sanitize + format phone number with selected dial (country) code
-        $dial = preg_replace('/\D+/', '', (string) $country_code);
-        $phone_raw = trim((string) $phone);
+			return;
+		}
 
-        if (!empty($dial) && $phone_raw !== '' && strpos($phone_raw, '+') !== 0) {
-            $local = preg_replace('/\D+/', '', $phone_raw);
-            $phone = '+' . $dial . ($local !== '' ? (' ' . $local) : '');
-        } elseif (!empty($dial) && $phone_raw === '') {
-            $phone = '+' . $dial;
-        }
+		$queryEmail = isset($post['query_email']) ? $post['query_email'] : '';
+		$query = isset($post['query_support']) ? $post['query_support'] : '';
+		$phone = isset($post['query_phone']) ? $post['query_phone'] : '';
+		$countryCode = isset($post['country_code']) ? $post['country_code'] : '';
+		$clientTimezone = isset($post['client_timezone']) ? $post['client_timezone'] : '';
+		$clientTimezoneOffset = isset($post['client_timezone_offset']) ? $post['client_timezone_offset'] : '';
+		$supportType = isset($post['support_type']) ? $post['support_type'] : 'general_query';
+		$callDate = isset($post['call_date']) ? $post['call_date'] : '';
+		$callTime = isset($post['call_time']) ? $post['call_time'] : '';
 
-        $query_with_details = $query;
+		if (MoImportExportUtility::checkEmptyOrNull($queryEmail) || MoImportExportUtility::checkEmptyOrNull($query))
+		{
+			$this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us', Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_MSG_SUBMIT_QUERY'), 'error');
 
-        // Timezone details (priority: browser tz -> Joomla user tz -> global config offset)
-        $user = Factory::getUser();
-        $timezone = $user->getParam('timezone');
-        if (empty($timezone)) {
-            $config = Factory::getConfig();
-            $timezone = $config->get('offset');
-        }
+			return;
+		}
 
-        // Prefer browser timezone name if provided
-        $tzName = trim((string) $client_timezone);
-        if ($tzName === '') {
-            $tzName = (string) $timezone;
-        }
-        if (trim($tzName) === '') {
-            $tzName = 'UTC';
-        }
+		// Sanitize + format phone number with selected dial (country) code
+		$dial = preg_replace('/\D+/', '', (string) $countryCode);
+		$phoneRaw = trim((string) $phone);
 
-        // Build UTC offset like "+05:30" or "-06:00"
-        $utcOffset = '';
-        $tzOffsetMinutes = trim((string) $client_timezone_offset);
-        if ($tzOffsetMinutes !== '' && preg_match('/^-?\d+$/', $tzOffsetMinutes)) {
-            // JS Date.getTimezoneOffset(): minutes behind UTC (e.g. Chicago winter = 360)
-            $m = (int) $tzOffsetMinutes;
-            $sign = $m > 0 ? '-' : '+';
-            $abs = abs($m);
-            $hh = str_pad((string) floor($abs / 60), 2, '0', STR_PAD_LEFT);
-            $mm = str_pad((string) ($abs % 60), 2, '0', STR_PAD_LEFT);
-            $utcOffset = $sign . $hh . ':' . $mm;
-        } else {
-            // Fallback: compute offset from timezone name on server (handles DST)
-            try {
-                $tzObj = new \DateTimeZone($tzName);
-                $dt = new \DateTime('now', $tzObj);
-                $offsetSeconds = (int) $dt->getOffset();
-                $sign = $offsetSeconds >= 0 ? '+' : '-';
-                $abs = abs($offsetSeconds);
-                $hh = str_pad((string) floor($abs / 3600), 2, '0', STR_PAD_LEFT);
-                $mm = str_pad((string) floor(($abs % 3600) / 60), 2, '0', STR_PAD_LEFT);
-                $utcOffset = $sign . $hh . ':' . $mm;
-            } catch (\Exception $e) {
-                $utcOffset = '+00:00';
-                $tzName = 'UTC';
-            }
-        }
+		if (!empty($dial) && $phoneRaw !== '' && strpos($phoneRaw, '+') !== 0)
+		{
+			$local = preg_replace('/\D+/', '', $phoneRaw);
+			$phone = '+' . $dial . ($local !== '' ? (' ' . $local) : '');
+		}
+		elseif (!empty($dial) && $phoneRaw === '')
+		{
+			$phone = '+' . $dial;
+		}
 
-        if ($support_type == 'setup_call') {
-            $query_with_details .= "\n\n--- Support Request Details ---";
-            $query_with_details .= "\nSupport Type: Setup Call";
+		$queryWithDetails = $query;
 
-            // Handle missing or empty call date
-            if (!empty($call_date)) {
-                $formatted_date = date('F j, Y', strtotime($call_date));
-            } else {
-                $formatted_date = 'Not specified';
-            }
+		// Timezone details (priority: browser tz -> Joomla user tz -> global config offset)
+		$user = Factory::getUser();
+		$timezone = $user->getParam('timezone');
 
-            if (!empty($call_time)) {
-                $formatted_time = date('g:i A', strtotime($call_time));
-            } else {
-                $formatted_time = 'Not specified';
-            }
+		if (empty($timezone))
+		{
+			$config = Factory::getConfig();
+			$timezone = $config->get('offset');
+		}
 
-            $query_with_details .= "\nPreferred Call Date: " . $formatted_date;
-            $query_with_details .= "\nPreferred Call Time: " . $formatted_time;
-        }
+		// Prefer browser timezone name if provided
+		$tzName = trim((string) $clientTimezone);
 
-        $timezoneInfo = $tzName . " (UTC " . $utcOffset . ")";
+		if ($tzName === '')
+		{
+			$tzName = (string) $timezone;
+		}
 
-        $contact_us = new MoImportExportCustomer();
-        $submited = json_decode($contact_us->submit_contact_us($query_email, $phone, $query_with_details, $timezoneInfo), true);
-        if (json_last_error() == JSON_ERROR_NONE) {
-            if (is_array($submited) && array_key_exists('status', $submited) && $submited['status'] == 'ERROR') {
-                $this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us', $submited['message'], 'error');
-            } else {
-                if ($submited == false) {
-                    $this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us', Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_MSG_QUERY_NOT_SUBMIT'), 'error');
-                } else {
-                    if ($support_type == 'setup_call') {
-                        $this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us', Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_MSG_THANK_YOU'));
-                    } else {
-                        $this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us', Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_MSG_GENERAL_QUERY'));
-                    }
-                }
-            }
-        }
-    }
+		if (trim($tzName) === '')
+		{
+			$tzName = 'UTC';
+		}
+
+		// Build UTC offset like "+05:30" or "-06:00"
+		$utcOffset = '';
+		$tzOffsetMinutes = trim((string) $clientTimezoneOffset);
+
+		if ($tzOffsetMinutes !== '' && preg_match('/^-?\d+$/', $tzOffsetMinutes))
+		{
+			// JS Date.getTimezoneOffset(): minutes behind UTC (e.g. Chicago winter = 360)
+			$m = (int) $tzOffsetMinutes;
+			$sign = $m > 0 ? '-' : '+';
+			$abs = abs($m);
+			$hh = str_pad((string) floor($abs / 60), 2, '0', STR_PAD_LEFT);
+			$mm = str_pad((string) ($abs % 60), 2, '0', STR_PAD_LEFT);
+			$utcOffset = $sign . $hh . ':' . $mm;
+		}
+		else
+		{
+			// Fallback: compute offset from timezone name on server (handles DST)
+			try
+			{
+				$tzObj = new \DateTimeZone($tzName);
+				$dt = new \DateTime('now', $tzObj);
+				$offsetSeconds = (int) $dt->getOffset();
+				$sign = $offsetSeconds >= 0 ? '+' : '-';
+				$abs = abs($offsetSeconds);
+				$hh = str_pad((string) floor($abs / 3600), 2, '0', STR_PAD_LEFT);
+				$mm = str_pad((string) floor(($abs % 3600) / 60), 2, '0', STR_PAD_LEFT);
+				$utcOffset = $sign . $hh . ':' . $mm;
+			}
+			catch (\Exception $e)
+			{
+				$utcOffset = '+00:00';
+				$tzName = 'UTC';
+			}
+		}
+
+		if ($supportType == 'setup_call')
+		{
+			$queryWithDetails .= "\n\n--- Support Request Details ---";
+			$queryWithDetails .= "\nSupport Type: Setup Call";
+
+			// Handle missing or empty call date
+			if (!empty($callDate))
+			{
+				$formattedDate = date('F j, Y', strtotime($callDate));
+			}
+			else
+			{
+				$formattedDate = 'Not specified';
+			}
+
+			if (!empty($callTime))
+			{
+				$formattedTime = date('g:i A', strtotime($callTime));
+			}
+			else
+			{
+				$formattedTime = 'Not specified';
+			}
+
+			$queryWithDetails .= "\nPreferred Call Date: " . $formattedDate;
+			$queryWithDetails .= "\nPreferred Call Time: " . $formattedTime;
+		}
+
+		$timezoneInfo = $tzName . " (UTC " . $utcOffset . ")";
+
+		$contactUs = new MoImportExportCustomer;
+		$submited = json_decode($contactUs->submitContactUs($queryEmail, $phone, $queryWithDetails, $timezoneInfo), true);
+
+		if (json_last_error() == JSON_ERROR_NONE)
+		{
+			if (is_array($submited) && array_key_exists('status', $submited) && $submited['status'] == 'ERROR')
+			{
+				$this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us', $submited['message'], 'error');
+			}
+			else
+			{
+				if ($submited == false)
+				{
+					$this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us', Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_MSG_QUERY_NOT_SUBMIT'), 'error');
+				}
+				else
+				{
+					if ($supportType == 'setup_call')
+					{
+						$this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us', Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_MSG_THANK_YOU'));
+					}
+					else
+					{
+						$this->setRedirect('index.php?option=com_miniorange_importexportusers&view=accountsetup&tab-panel=contact_us', Text::_('COM_MINIORANGE_IMPORTEXPORTUSERS_MSG_GENERAL_QUERY'));
+					}
+				}
+			}
+		}
+	}
 }

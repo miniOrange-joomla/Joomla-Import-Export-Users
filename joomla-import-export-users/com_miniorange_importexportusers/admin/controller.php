@@ -8,7 +8,7 @@
  * @license     GNU General Public License version 3; see LICENSE.txt
  * @contact     info@xecurify.com
  */
- 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\MVC\Controller\BaseController;
@@ -28,5 +28,5 @@ class MiniorangeimportexportusersController extends BaseController
 	 * @var string
 	 * @since 12.2
 	 */
-	protected $default_view = 'accountsetup';
+	protected $default_view = 'accountsetup'; // phpcs:ignore Joomla.NamingConventions.ValidVariableName.MemberNotCamelCaps -- Joomla BaseController property.
 }
